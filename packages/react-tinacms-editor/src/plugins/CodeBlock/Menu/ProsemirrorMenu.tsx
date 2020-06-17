@@ -24,7 +24,13 @@ import { CodeIcon } from '@tinacms/icons'
 import { commandControl } from '../../../components/MenuHelpers'
 
 function makeCodeBlock(state: EditorState, dispatch: any) {
-  return setBlockType(state.schema.nodes.code_block)(state, dispatch)
+  const { code_block, paragraph } = state.schema.nodes
+  const { selection } = state
+  const currentNode = selection.$to.node(selection.$to.depth)
+  if (currentNode && currentNode.type === code_block && !dispatch) return true
+  return currentNode.type === code_block
+    ? setBlockType(paragraph)(state, dispatch)
+    : setBlockType(code_block)(state, dispatch)
 }
 
 export const ProsemirrorMenu = commandControl(

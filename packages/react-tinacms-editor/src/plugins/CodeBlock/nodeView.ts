@@ -16,12 +16,11 @@ limitations under the License.
 
 */
 
-import { exitCode } from 'prosemirror-commands'
+import { exitCode, setBlockType } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Node } from 'prosemirror-model'
 import { Selection, TextSelection } from 'prosemirror-state'
 import { EditorView, NodeView } from 'prosemirror-view'
-
 import { deleteEmptyCodeblock, exitCodeUp, exitCodeHard } from './commands'
 
 // TODO
@@ -198,6 +197,11 @@ export class CodeBlockView implements NodeView {
         } else if (exitCodeHard(view.state, view.dispatch)) {
           return view.focus()
         }
+      },
+      [`${mod}-Alt-0`]: () => {
+        const { state, dispatch } = view
+        const { paragraph } = state.schema.nodes
+        setBlockType(paragraph)(state, dispatch)
       },
     })
   }
