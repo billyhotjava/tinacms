@@ -53,6 +53,10 @@ export class CodeBlockView implements NodeView {
     this.cm.on('cursorActivity', this.onCursorActivity)
     this.cm.on('changes', this.onChange)
     this.cm.on('focus', this.forwardSelection)
+
+    const offset = this.getPos() + 1
+    const { anchor, head } = view.state.selection
+    this.setSelection(anchor - offset, head - offset)
   }
 
   onCursorActivity = () => {
@@ -202,6 +206,7 @@ export class CodeBlockView implements NodeView {
         const { state, dispatch } = view
         const { paragraph } = state.schema.nodes
         setBlockType(paragraph)(state, dispatch)
+        view.focus()
       },
     })
   }
@@ -267,6 +272,22 @@ export class CodeBlockView implements NodeView {
    */
   stopEvent() {
     return true
+  }
+
+  /**
+   * Reset prosemirror selection when code block is destroyed
+   */
+  destroy() {
+    const { state, dispatch } = this.view
+    const { anchor, head } = state.selection
+    dispatch(
+      state.tr.setSelection(
+        new TextSelection(
+          state.tr.doc.resolve(anchor),
+          state.tr.doc.resolve(head)
+        )
+      )
+    )
   }
 }
 

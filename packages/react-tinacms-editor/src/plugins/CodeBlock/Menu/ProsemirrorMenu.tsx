@@ -38,5 +38,5 @@ export const ProsemirrorMenu = commandControl(
   CodeIcon,
   'Codeblock',
   'Codeblock',
-  false
+  true
 ) //codeblock focusing messes with scroll
